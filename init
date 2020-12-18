@@ -1,0 +1,23 @@
+#!/bin/bash
+
+export DBUS_SYSTEM_BUS_ADDRESS=unix:path=/host/run/dbus/system_bus_socket
+
+DBUS_SYSTEM_BUS_ADDRESS=unix:path=/host/run/dbus/system_bus_socket   dbus-send   --system   --print-reply   --dest=org.freedesktop.systemd1   /org/freedesktop/systemd1   org.freedesktop.systemd1.Manager.StartUnit string:"plymouth-quit.service" string:"replace"
+
+sleep 1
+
+while true; do    
+    if [ ! -z "$MODE" ]; then
+    echo "Player Mode is $MODE"
+        if [ "$MODE" == "master" ]; then
+        echo "Start Master"
+        ./omxplayer-sync -mu $FILE
+        else
+        echo "Start Slave"
+        ./omxplayer-sync -lu $FILE
+        fi
+    else
+        echo "No Mode - set Master"
+        ./omxplayer-sync -mu $FILE
+    fi
+done

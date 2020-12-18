@@ -1,0 +1,20 @@
+FROM balenalib/raspberrypi3-node:10-buster-run
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+omxplayer \
+python3 \
+build-essential \
+libpcre3 \
+fonts-freefont-ttf \
+fbset \
+libssh-4 \
+python3-dbus \
+dbus && \
+apt-get clean && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /usr/src/app
+ENV UDEV=1
+COPY . ./
+RUN chmod +x /usr/src/app/omxplayer-sync
+
+CMD ["bash", "/usr/src/app/init"]
