@@ -6,18 +6,30 @@ DBUS_SYSTEM_BUS_ADDRESS=unix:path=/host/run/dbus/system_bus_socket   dbus-send  
 
 sleep 1
 
-while true; do    
+echo "cp Video File"
+
+cp media/*.mp4 video.mp4 || true
+
+echo "cp Done"
+
+while true; do
+if test -f "$FILE"; then
+    echo "$FILE exists."
     if [ ! -z "$MODE" ]; then
     echo "Player Mode is $MODE"
         if [ "$MODE" == "master" ]; then
-        echo "Start Master"
-        ./omxplayer-sync -mu $FILE
+        echo "Start Master1"
+        ./omxplayer-sync -mu $FILE >/proc/1/fd/1
         else
         echo "Start Slave"
-        ./omxplayer-sync -lu $FILE
+        ./omxplayer-sync -lu $FILE >/proc/1/fd/1
         fi
     else
-        echo "No Mode - set Master"
-        ./omxplayer-sync -mu $FILE
+        echo "No Mode - Play Pure"
+        omxplayer $FILE >/proc/1/fd/1
     fi
+else
+    echo "No File exists ... Sleep 30 Sek"
+    sleep 30
+fi  
 done
